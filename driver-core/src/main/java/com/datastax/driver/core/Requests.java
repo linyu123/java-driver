@@ -238,11 +238,25 @@ class Requests {
             return set;
         }
 
-        static int serialize(EnumSet<QueryFlag> flags) {
+        private static int serialize(EnumSet<QueryFlag> flags) {
             int i = 0;
             for (QueryFlag flag : flags)
                 i |= 1 << flag.ordinal();
             return i;
+        }
+
+        static void writeFlags(EnumSet<QueryFlag> flags, ByteBuf dest, ProtocolVersion version) {
+            int i = serialize(flags);
+            if (version.compareTo(ProtocolVersion.V5) >= 0) {
+                dest.writeInt(i);
+            } else {
+                dest.writeByte((byte) i);
+            }
+        }
+
+        static int flagsSize(ProtocolVersion version) {
+            // Protocol V5+, flags are [int], otherwise [byte].
+            return version.compareTo(ProtocolVersion.V5) >= 0 ? 4 : 1;
         }
     }
 
@@ -328,7 +342,7 @@ class Requests {
                 case V4:
                 case V5:
                     CBUtil.writeConsistencyLevel(consistency, dest);
-                    dest.writeByte((byte) QueryFlag.serialize(flags));
+                    QueryFlag.writeFlags(flags, dest, version);
                     if (flags.contains(QueryFlag.VALUES)) {
                         if (flags.contains(QueryFlag.VALUE_NAMES)) {
                             assert version.compareTo(ProtocolVersion.V3) >= 0;
@@ -364,7 +378,7 @@ class Requests {
                 case V5:
                     int size = 0;
                     size += CBUtil.sizeOfConsistencyLevel(consistency);
-                    size += 1; // flags
+                    size += QueryFlag.flagsSize(version);
                     if (flags.contains(QueryFlag.VALUES)) {
                         if (flags.contains(QueryFlag.VALUE_NAMES)) {
                             assert version.compareTo(ProtocolVersion.V3) >= 0;
@@ -514,7 +528,7 @@ class Requests {
                 case V4:
                 case V5:
                     CBUtil.writeConsistencyLevel(consistency, dest);
-                    dest.writeByte((byte) QueryFlag.serialize(flags));
+                    QueryFlag.writeFlags(flags, dest, version);
                     if (flags.contains(QueryFlag.SERIAL_CONSISTENCY))
                         CBUtil.writeConsistencyLevel(serialConsistency, dest);
                     if (flags.contains(QueryFlag.DEFAULT_TIMESTAMP))
@@ -534,7 +548,7 @@ class Requests {
                 case V5:
                     int size = 0;
                     size += CBUtil.sizeOfConsistencyLevel(consistency);
-                    size += 1; // flags
+                    size += QueryFlag.flagsSize(version);
                     if (flags.contains(QueryFlag.SERIAL_CONSISTENCY))
                         size += CBUtil.sizeOfConsistencyLevel(serialConsistency);
                     if (flags.contains(QueryFlag.DEFAULT_TIMESTAMP))
