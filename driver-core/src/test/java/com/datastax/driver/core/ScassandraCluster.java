@@ -52,16 +52,23 @@ public class ScassandraCluster {
 
     private final List<Map<String, ?>> keyspaceRows;
 
+    private final String cassandraVersion;
+
     private static final java.util.UUID schemaVersion = UUIDs.random();
 
 
     private final Map<Integer, Map<Integer, Map<String, Object>>> forcedPeerInfos;
 
     ScassandraCluster(Integer[] nodes, String ipPrefix, int binaryPort, int adminPort,
-                      List<Map<String, ?>> keyspaceRows,
+                      List<Map<String, ?>> keyspaceRows, String cassandraVersion,
                       Map<Integer, Map<Integer, Map<String, Object>>> forcedPeerInfos) {
         this.ipPrefix = ipPrefix;
         this.binaryPort = binaryPort;
+        // If cassandraVersion is not explicitly provided, use 3.0.10 as current version of SCassandra that
+        // supports up to protocol version 4.  Without specifying a newer version, could cause the driver
+        // to think the node doesn't support a protocol version that it indeed does.
+        this.cassandraVersion = cassandraVersion != null ?
+                cassandraVersion : "3.0.10";
         this.forcedPeerInfos = forcedPeerInfos;
 
         int node = 1;
@@ -297,7 +304,7 @@ public class ScassandraCluster {
                     addPeerInfo(row, dc, n + 1, "listen_address", getPeerInfo(dc, n + 1, "listen_address", address));
                     addPeerInfo(row, dc, n + 1, "partitioner", "org.apache.cassandra.dht.Murmur3Partitioner");
                     addPeerInfo(row, dc, n + 1, "rack", getPeerInfo(dc, n + 1, "rack", "rack1"));
-                    addPeerInfo(row, dc, n + 1, "release_version", getPeerInfo(dc, n + 1, "release_version", "2.1.8"));
+                    addPeerInfo(row, dc, n + 1, "release_version", getPeerInfo(dc, n + 1, "release_version", cassandraVersion));
                     addPeerInfo(row, dc, n + 1, "tokens", ImmutableSet.of(tokens.get(n)));
                     addPeerInfo(row, dc, n + 1, "schema_version", schemaVersion);
                     addPeerInfo(row, dc, n + 1, "graph", false);
@@ -314,7 +321,7 @@ public class ScassandraCluster {
                     addPeerInfo(row, dc, n + 1, "rpc_address", address);
                     addPeerInfo(row, dc, n + 1, "data_center", datacenter(dc));
                     addPeerInfo(row, dc, n + 1, "rack", getPeerInfo(dc, n + 1, "rack", "rack1"));
-                    addPeerInfo(row, dc, n + 1, "release_version", getPeerInfo(dc, n + 1, "release_version", "2.1.8"));
+                    addPeerInfo(row, dc, n + 1, "release_version", getPeerInfo(dc, n + 1, "release_version", cassandraVersion));
                     addPeerInfo(row, dc, n + 1, "tokens", ImmutableSet.of(Long.toString(tokens.get(n))));
                     addPeerInfo(row, dc, n + 1, "host_id", UUIDs.random());
                     addPeerInfo(row, dc, n + 1, "schema_version", schemaVersion);
@@ -495,6 +502,7 @@ public class ScassandraCluster {
         private String ipPrefix = TestUtils.IP_PREFIX;
         private final List<Map<String, ?>> keyspaceRows = Lists.newArrayList();
         private final Map<Integer, Map<Integer, Map<String, Object>>> forcedPeerInfos = Maps.newHashMap();
+        private String cassandraVersion = null;
 
         public ScassandraClusterBuilder withNodes(Integer... nodes) {
             this.nodes = nodes;
@@ -556,8 +564,13 @@ public class ScassandraCluster {
             return this;
         }
 
+        public ScassandraClusterBuilder withCassandraVersion(String version) {
+            this.cassandraVersion = version;
+            return this;
+        }
+
         public ScassandraCluster build() {
-            return new ScassandraCluster(nodes, ipPrefix, TestUtils.findAvailablePort(), TestUtils.findAvailablePort(), keyspaceRows, forcedPeerInfos);
+            return new ScassandraCluster(nodes, ipPrefix, TestUtils.findAvailablePort(), TestUtils.findAvailablePort(), keyspaceRows, cassandraVersion, forcedPeerInfos);
         }
     }
 }
