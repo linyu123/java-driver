@@ -103,7 +103,6 @@ public class ClusterInitTest {
                     .withSocketOptions(socketOptions)
                     .withReconnectionPolicy(reconnectionPolicy)
                     .withPoolingOptions(poolingOptions)
-                    .withProtocolVersion(ProtocolVersion.V2)
                     .build();
             cluster.connect();
 
@@ -231,7 +230,6 @@ public class ClusterInitTest {
                 .addContactPoints(scassandraCluster.address(1).getAddress())
                 .withPort(scassandraCluster.getBinaryPort())
                 .withNettyOptions(nonQuietClusterCloseOptions)
-                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {

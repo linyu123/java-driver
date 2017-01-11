@@ -277,9 +277,9 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
         Cluster cluster = createClusterBuilder().build();
         List<MockRequest> requests = newArrayList();
         try {
+            HostConnectionPool pool = createPool(cluster, 1, 1);
             // Limit requests per connection to 100 so we don't exhaust stream ids.
             cluster.getConfiguration().getPoolingOptions().setMaxRequestsPerConnection(HostDistance.LOCAL, 100);
-            HostConnectionPool pool = createPool(cluster, 1, 1);
             int maxQueueSize = 256;
 
             assertThat(pool.connections.size()).isEqualTo(1);
@@ -1167,6 +1167,8 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
 
     private HostConnectionPool createPool(Cluster cluster, int coreConnections, int maxConnections) {
         cluster.getConfiguration().getPoolingOptions()
+                .setNewConnectionThreshold(HostDistance.LOCAL, 100)
+                .setMaxRequestsPerConnection(HostDistance.LOCAL, 128)
                 .setMaxConnectionsPerHost(HostDistance.LOCAL, maxConnections)
                 .setCoreConnectionsPerHost(HostDistance.LOCAL, coreConnections);
         Session session = cluster.connect();

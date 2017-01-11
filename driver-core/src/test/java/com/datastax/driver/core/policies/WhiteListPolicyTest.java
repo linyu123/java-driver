@@ -57,7 +57,6 @@ public class WhiteListPolicyTest {
                 .withPort(sCluster.getBinaryPort())
                 .withLoadBalancingPolicy(new WhiteListPolicy(new RoundRobinPolicy(), whiteList))
                 .withNettyOptions(nonQuietClusterCloseOptions)
-                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {
@@ -113,7 +112,6 @@ public class WhiteListPolicyTest {
                 .withPort(sCluster.getBinaryPort())
                 .withLoadBalancingPolicy(new WhiteListPolicy(new RoundRobinPolicy(), whiteList))
                 .withNettyOptions(nonQuietClusterCloseOptions)
-                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {

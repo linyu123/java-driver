@@ -62,7 +62,6 @@ public class RoundRobinPolicyTest {
                 .addContactPoints(sCluster.address(1).getAddress())
                 .withPort(sCluster.getBinaryPort())
                 .withLoadBalancingPolicy(new RoundRobinPolicy())
-                .withProtocolVersion(ProtocolVersion.V2)
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 .build();
 
@@ -99,7 +98,6 @@ public class RoundRobinPolicyTest {
                 .addContactPoints(sCluster.address(1).getAddress())
                 .withPort(sCluster.getBinaryPort())
                 .withLoadBalancingPolicy(new RoundRobinPolicy())
-                .withProtocolVersion(ProtocolVersion.V2)
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 .build();
 
@@ -139,7 +137,6 @@ public class RoundRobinPolicyTest {
                 .addContactPoints(sCluster.address(1).getAddress())
                 .withPort(sCluster.getBinaryPort())
                 .withLoadBalancingPolicy(new RoundRobinPolicy())
-                .withProtocolVersion(ProtocolVersion.V2)
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 .build();
 
