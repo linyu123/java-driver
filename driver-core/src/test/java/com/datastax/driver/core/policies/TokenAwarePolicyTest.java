@@ -78,6 +78,7 @@ public class TokenAwarePolicyTest extends CCMTestsSupport {
                 .withPort(sCluster.getBinaryPort())
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 .withLoadBalancingPolicy(loadBalancingPolicy)
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {
@@ -148,6 +149,7 @@ public class TokenAwarePolicyTest extends CCMTestsSupport {
                 .withPort(sCluster.getBinaryPort())
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 .withLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()))
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         // when: A query is made with a routing key
@@ -196,6 +198,7 @@ public class TokenAwarePolicyTest extends CCMTestsSupport {
                         .withLocalDc(ScassandraCluster.datacenter(2))
                         .withUsedHostsPerRemoteDc(3)
                         .build()))
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         // when: A query is made with a routing key
@@ -241,6 +244,7 @@ public class TokenAwarePolicyTest extends CCMTestsSupport {
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 // Don't shuffle replicas just to keep test deterministic.
                 .withLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy(), false))
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {
@@ -334,6 +338,7 @@ public class TokenAwarePolicyTest extends CCMTestsSupport {
                 .withNettyOptions(nonQuietClusterCloseOptions)
                 // Don't shuffle replicas just to keep test deterministic.
                 .withLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy(), false))
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         try {

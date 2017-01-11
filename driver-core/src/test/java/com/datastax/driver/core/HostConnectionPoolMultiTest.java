@@ -59,6 +59,7 @@ public class HostConnectionPoolMultiTest {
                 .withPoolingOptions(poolingOptions)
                 .withSocketOptions(socketOptions)
                 .withReconnectionPolicy(new ConstantReconnectionPolicy(1000))
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
         cluster.connect();
     }

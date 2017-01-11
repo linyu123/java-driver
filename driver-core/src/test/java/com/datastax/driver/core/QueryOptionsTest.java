@@ -53,6 +53,7 @@ public class QueryOptionsTest {
                 .withLoadBalancingPolicy(loadBalancingPolicy)
                 .withQueryOptions(queryOptions)
                 .withNettyOptions(nonQuietClusterCloseOptions)
+                .withProtocolVersion(ProtocolVersion.V2)
                 .build();
 
         session = cluster.connect();

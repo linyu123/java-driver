@@ -66,6 +66,7 @@ public class DCAwareRoundRobinPolicyTest {
 
     private Cluster.Builder builder() {
         return Cluster.builder()
+                .withProtocolVersion(ProtocolVersion.V2)
                 // Close cluster immediately to speed up tests.
                 .withNettyOptions(nonQuietClusterCloseOptions);
     }
